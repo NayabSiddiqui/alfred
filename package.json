@@ -1,0 +1,26 @@
+{
+  "name": "alfred",
+  "version": "1.0.0",
+  "description": "Alfred, a slack bot to run various errands for an organization",
+  "scripts": {
+    "dev": "npm-run-all --parallel server:watch test:watch",
+    "test": "mocha --reporter spec src/test/js/testSetup.js \"test/**/*.spec.js\"",
+    "test:watch": "npm run test -- --watch",
+    "server:watch": "nodemon --watch src/server server.js"
+  },
+  "keywords": [
+    "slackbot"
+  ],
+  "author": "Nayab Siddiqui",
+  "license": "ISC",
+  "dependencies": {
+    "botkit": "^0.5.4",
+    "express": "^4.15.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.4.1",
+    "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2"
+  }
+}

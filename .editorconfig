@@ -1,0 +1,4 @@
+# 2 space indentation for javascript files only
+[**.js*]
+indent_style = space
+indent_size = 2

@@ -1,0 +1,7 @@
+#idea related files
+/.idea
+*.iml
+
+#node related files
+/node_modules
+*.log*
