@@ -1,10 +1,27 @@
-var express = require('express');
+var Botkit = require('botkit');
 
-var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-var config = require('./src/server/config/config')[env];
+function get_response() {
+  var responses = [
+    'There was a car coming.',
+    'To get to the other side.',
+    'To get the newspaper.',
+    'Because it wanted to find out what those jokes were about.',
+    'To boldly go where no chicken has gone before!',
+    'Because the light was green.',
+    'I could tell you, but then the Chicken Mafia would kill me.'
+  ];
 
-var app = express();
+  return responses[Math.floor(Math.random() * responses.length)];
+}
 
-app.listen(config.port, () => {
-  console.log('Server listening on port ' + config.port + '...');
+var controller = Botkit.slackbot({
+  debug: false
+});
+
+var bot = controller.spawn({
+  token: process.env.SLACK_TOKEN
+}).startRTM();
+
+controller.hears(['why did the chicken cross the road'], 'direct_message,direct_mention,mention', function (bot, message) {
+  bot.reply(message, get_response());
 });

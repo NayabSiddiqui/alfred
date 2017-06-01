@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Alfred, a slack bot to run various errands for an organization",
   "scripts": {
+    "start": "node server.js",
     "dev": "npm-run-all --parallel server:watch test:watch",
     "test": "mocha --reporter spec src/test/js/testSetup.js \"test/**/*.spec.js\"",
     "test:watch": "npm run test -- --watch",
