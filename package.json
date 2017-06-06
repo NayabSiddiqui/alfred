@@ -5,9 +5,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "npm-run-all --parallel server:watch test:watch",
-    "test": "mocha --reporter spec src/test/js/testSetup.js \"test/**/*.spec.js\"",
+    "test": "mocha --reporter spec \"test/**/*.spec.js\"",
     "test:watch": "npm run test -- --watch",
-    "server:watch": "nodemon --watch src/server server.js"
+    "server:watch": "nodemon --watch src server.js"
   },
   "keywords": [
     "slackbot"
