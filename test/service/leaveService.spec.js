@@ -4,7 +4,7 @@ var chai = require("chai"),
   nock = require('nock'),
   moment = require('moment');
 
-var LeaveService = require('../../../src/service/leaveService');
+var LeaveService = require('../../src/service/leaveService');
 
 describe('Leave Service', () => {
 
