@@ -1,13 +1,13 @@
 {
   "name": "alfred",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Alfred, a slack bot to run various errands for an organization",
   "scripts": {
-    "start": "node server.js",
+    "start": "node bot.js",
     "dev": "npm-run-all --parallel server:watch test:watch",
     "test": "mocha --reporter spec \"test/**/*.spec.js\"",
     "test:watch": "npm run test -- --watch",
-    "server:watch": "nodemon --watch src server.js"
+    "server:watch": "nodemon --watch src/ bot.js"
   },
   "keywords": [
     "slackbot"

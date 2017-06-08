@@ -5,3 +5,6 @@
 #node related files
 /node_modules
 *.log*
+
+#others
+/alfred-bot-db
