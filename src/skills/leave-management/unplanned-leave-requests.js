@@ -1,6 +1,6 @@
 // TODO spin up regex for the below messages
 
-const unplannedLeaveMessages = [
+const unplannedLeaveRequests = [
   'on leave today',
   'taking day off',
   'taking off today',
@@ -12,4 +12,4 @@ const unplannedLeaveMessages = [
   'on leave today'
 ];
 
-module.exports = unplannedLeaveMessages;
+module.exports = unplannedLeaveRequests;

@@ -1,5 +1,5 @@
-var Botkit = require('botkit'),
-  unplannedLeaveMessages = require('./src/listeners/unplanned-leave');
+var Botkit = require('botkit');
+
 var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var config = require('./src/config/config')[env];
@@ -64,63 +64,18 @@ slackController.hears('', 'direct_mention,mention', function (bot, message) {
   });
 });
 
-slackController.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
-  bot.reply(message, {
-    attachments: [
-      {
-        title: 'Do you want me to apply for an unplanned leave today on your behalf ?',
-        callback_id: 'unplanned-leave',
-        attachment_type: 'default',
-        actions: [
-          {
-            "name": "yes-full-day",
-            "text": "Yes",
-            "value": "yes-full-day",
-            "type": "button",
-            "style": "primary"
-          },
-          {
-            "name": "yes-half-day",
-            "text": "Yes, for half day",
-            "value": "yes-half-day",
-            "type": "button",
-            "style": "primary"
-          },
-          {
-            "name": "no",
-            "text": "No",
-            "value": "no",
-            "type": "button"
-          }
-        ]
-      }
-    ]
-  });
-});
+require('./src/skills/initialize-brains')(slackController);
 
 slackController.on('interactive_message_callback', function (bot, message) {
 
   const callbackId = message.callback_id;
-  switch (callbackId) {
-    case "unplanned-leave":
-      const userResponse = message.actions[0].value;
-      let botResponse = '';
-      switch (userResponse) {
-        case "yes-full-day":
-          botResponse = "Full day leave applied.";
-          break;
-        case "yes-half-day":
-          botResponse = "Half day leave applied.";
-          break;
-        case "no":
-          botResponse = "Roger that!";
-          break;
-      }
-      bot.replyInteractive(message, `${botResponse} :thumbsup: `);
-      break;
-    default:
-      bot.replyInteractive(message, "Oops. Found myself in an unknown territory. :confused: ");
-      break;
+  const handler = require('./src/skills/interactive-message-handler-factory')(callbackId);
+  if(!handler){
+    bot.replyInteractive(message, "Oops. Found myself in an unknown territory. :confused: ");
+  }
+  else {
+    const response = handler.handleResponse(message.actions[0].value);
+    bot.replyInteractive(message, response);
   }
 });
 
