@@ -13,21 +13,6 @@ if (!clientId || !clientSecret || !config.port) {
   process.exit(1);
 }
 
-function get_response() {
-  var responses = [
-    'There was a car coming.',
-    'To get to the other side.',
-    'To get the newspaper.',
-    'Because it wanted to find out what those jokes were about.',
-    'To boldly go where no chicken has gone before!',
-    'Because the light was green.',
-    'I could tell you, but then the Chicken Mafia would kill me.'
-  ];
-
-  return responses[Math.floor(Math.random() * responses.length)];
-}
-
-
 const slackController = Botkit.slackbot({
   debug: true,
   interactive_replies: true, // tells botkit to send button clicks into conversations
