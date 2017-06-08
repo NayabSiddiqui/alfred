@@ -1,8 +1,8 @@
-var unplannedLeaveRequests = require('./unplanned-leave-requests'),
+var unplannedLeaveMessages = require('./unplanned-leave-messages'),
   callbackTypes = require('../callback-types');
 
 module.exports = function(controller){
-  controller.hears(unplannedLeaveRequests, 'direct_message', function (bot, message) {
+  controller.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
     bot.reply(message, {
       attachments: [
         {
@@ -35,4 +35,6 @@ module.exports = function(controller){
       ]
     });
   });
+
+
 };

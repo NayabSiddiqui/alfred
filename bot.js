@@ -13,17 +13,17 @@ if (!clientId || !clientSecret || !config.port) {
   process.exit(1);
 }
 
-const slackController = Botkit.slackbot({
+const controller = Botkit.slackbot({
   debug: true,
   interactive_replies: true, // tells botkit to send button clicks into conversations
   json_file_store: './alfred-bot-db/'
 });
 
-const slackbot = slackController.spawn({
+const slackbot = controller.spawn({
   token: process.env.SLACK_TOKEN,
 }).startRTM();
 
-slackController.configureSlackApp({
+controller.configureSlackApp({
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   redirectUri: 'https://00c4ebb2.ngrok.io/oauth',
@@ -32,18 +32,18 @@ slackController.configureSlackApp({
 });
 
 // set up a botkit app to expose oauth and webhook endpoints
-slackController.setupWebserver(config.port, function (err, webserver) {
+controller.setupWebserver(config.port, function (err, webserver) {
 
   // set up web endpoints for oauth, receiving webhooks, etc.
-  slackController
-    .createHomepageEndpoint(slackController.webserver)
-    .createOauthEndpoints(slackController.webserver, function (err, req, res) {
+  controller
+    .createHomepageEndpoint(controller.webserver)
+    .createOauthEndpoints(controller.webserver, function (err, req, res) {
     })
-    .createWebhookEndpoints(slackController.webserver);
+    .createWebhookEndpoints(controller.webserver);
 
 });
 
-slackController.hears('', 'direct_mention,mention', function (bot, message) {
+controller.hears('', 'direct_mention,mention', function (bot, message) {
   const user = message.user;
 
   bot.startPrivateConversation({
@@ -64,9 +64,9 @@ slackController.hears('', 'direct_mention,mention', function (bot, message) {
   });
 });
 
-require('./src/skills/initialize-brains')(slackController);
+require('./src/skills/initialize-brains')(controller);
 
-slackController.on('interactive_message_callback', function (bot, message) {
+controller.on('interactive_message_callback', function (bot, message) {
 
   const callbackId = message.callback_id;
   const handler = require('./src/skills/interactive-message-handler-factory')(callbackId);
