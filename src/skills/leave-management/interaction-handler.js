@@ -6,7 +6,7 @@ const InteractionHandler = function () {
       case "yes-half-day":
         return 'Half day leave applied. :thumbsup: ';
       case "no":
-        return 'Roger that! :thumbsup: ';
+        return 'Roger that! Cancelled your last request. :thumbsup: ';
     }
   };
 

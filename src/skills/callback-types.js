@@ -1,3 +1,4 @@
 module.exports = {
-  unplannedLeave: 'unplanned_leave'
+  unplannedLeave: 'unplanned_leave',
+  conversation: 'conversation'
 };

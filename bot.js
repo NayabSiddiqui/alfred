@@ -43,6 +43,9 @@ controller.setupWebserver(config.port, function (err, webserver) {
 
 });
 
+//register middleware
+// require('./src/middlewares/wit-ai')(controller);
+
 controller.hears('', 'direct_mention,mention', function (bot, message) {
   const user = message.user;
 

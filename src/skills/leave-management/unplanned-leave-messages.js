@@ -2,7 +2,6 @@
 
 const unplannedLeaveMessages = [
   'on leave today',
-  'taking day off',
   'taking off today',
   'taking a day off today',
   'not feeling well',

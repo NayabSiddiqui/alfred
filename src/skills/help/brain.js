@@ -3,18 +3,18 @@ const greetingMessages = require('./greeting-messages');
 module.exports = function(controller){
   controller.hears('help leaves', 'direct_message', function (bot, message) {
     bot.reply(message, {
-      text: "Try one of the following..",
+      text: "You can try one of the following..",
       attachments: [
         {
-          text: "type `not feeling well today` or `taking day off` to apply for an unplanned leave for today.",
+          text: "Type `not feeling well today` or `taking day off` to apply for an unplanned leave for today.",
           color: '#36a64f',
           mrkdwn_in: ['text']
         },
-        // {
-        //   text: "type `help meetings` to know more about how to book a room, invite others etc.",
-        //   color: '#9999ff',
-        //   mrkdwn_in: ['text']
-        // }
+        {
+          text: "Say `leave on dd-mm` or `leave from dd-mm to dd-mm` to apply for planned leaves.",
+          color: '#9999ff',
+          mrkdwn_in: ['text']
+        }
       ]
     });
   });
