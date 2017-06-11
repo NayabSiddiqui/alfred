@@ -8,36 +8,69 @@ module.exports = function (controller) {
   moment.locale('en');
 
   controller.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
-    bot.reply(message, {
-      attachments: [
+
+    bot.startConversation(message, function(error, convo){
+      convo.setVar('leaveDate', moment());
+      convo.setVar('displayDate', moment().format("LL"));
+
+      convo.addQuestion({
+        text: 'Do you want me to apply for an unplanned leave today on your behalf ? Please confirm.',
+        attachments: [
+          {
+            title: 'Leave for {{vars.displayDate}}',
+            callback_id: callbackTypes.conversation,
+            attachment_type: 'default',
+            actions: [
+              {
+                "name": "yes-full-day",
+                "text": "Yes",
+                "value": "yes-full-day",
+                "type": "button",
+                "style": "primary"
+              },
+              {
+                "name": "yes-half-day",
+                "text": "Yes, for half day",
+                "value": "yes-half-day",
+                "type": "button",
+                "style": "primary"
+              },
+              {
+                "name": "no",
+                "text": "No",
+                "value": "no",
+                "type": "button"
+              }
+            ]
+          }
+        ]}, [
         {
-          title: 'Do you want me to apply for an unplanned leave today on your behalf ?',
-          callback_id: callbackTypes.unplannedLeave,
-          attachment_type: 'default',
-          actions: [
-            {
-              "name": "yes-full-day",
-              "text": "Yes",
-              "value": "yes-full-day",
-              "type": "button",
-              "style": "primary"
-            },
-            {
-              "name": "yes-half-day",
-              "text": "Yes, for half day",
-              "value": "yes-half-day",
-              "type": "button",
-              "style": "primary"
-            },
-            {
-              "name": "no",
-              "text": "No",
-              "value": "no",
-              "type": "button"
-            }
-          ]
+          pattern: bot.utterances.yes,
+          callback: function (response, convo) {
+            convo.say('Great! I will continue...');
+
+            // do something else...
+            convo.next();
+
+          }
+        },
+        {
+          pattern: bot.utterances.no,
+          callback: function (response, convo) {
+            convo.say('Perhaps later.');
+            // do something else...
+            convo.next();
+          }
+        },
+        {
+          default: true,
+          callback: function (response, convo) {
+            // just repeat the question
+            convo.repeat();
+            convo.next();
+          }
         }
-      ]
+      ])
     });
   });
 
@@ -69,8 +102,8 @@ module.exports = function (controller) {
       else {
         bot.startConversation(message, function (err, convo) {
           convo.setVar('leaveDate',leaveDate.toDate());
-
           convo.setVar('displayDate', leaveDate.format("LL"));
+
           convo.addQuestion({
             text: 'Please confirm your leave application.',
             attachments: [

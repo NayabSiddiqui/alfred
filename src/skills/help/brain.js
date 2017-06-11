@@ -41,10 +41,10 @@ module.exports = function(controller){
 
   controller.hears(greetingMessages, 'direct_message', function (bot, message) {
     bot.reply(message, {
-      text: `Hey <@${message.user}>. How can I assist you today ? `,
+      text: `Hey <@${message.user}>. How are you today ? `,
       attachments: [
         {
-          text: "[Hint: type `help` to know more...",
+          text: "[Hint:] type `help` to know more about what I can do...",
           color: '#9999ff',
           mrkdwn_in: ['text']
         }

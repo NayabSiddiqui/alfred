@@ -8,7 +8,7 @@ const LeaveService = function (apiRootUrl) {
   const registerEmployee = function (employeeId, firstName, lastName) {
     return new Promise((resolve, reject) => {
       axios.post(`${url}/employees`, {
-        employeeId: employeeId,
+        id: employeeId,
         firstName: firstName,
         lastName: lastName
       })

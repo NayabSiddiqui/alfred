@@ -22,7 +22,7 @@ describe('Leave Service', () => {
   function givenThatEmployeeGetsRegistered(employeeId, firstName, lastName) {
     nock(leaveApiRootUrl)
       .post(`/employees`, {
-        employeeId: employeeId,
+        id: employeeId,
         firstName: firstName,
         lastName: lastName
       })
