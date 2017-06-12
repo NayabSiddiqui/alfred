@@ -44,13 +44,12 @@ describe('User Service', () => {
           })
           .finally(() => {
             db.close();
-          })
+          });
+        done();
       })
       .catch(error => {
         console.log("failed to connect to mongo db\n" + error);
-      })
-      .finally(() => {
-        done();
+        done(error);
       })
   });
 
@@ -72,15 +71,13 @@ describe('User Service', () => {
             collection.findOne({userId: user.userId})
               .then((user) => {
                 expect(user).to.eql(user);
-              })
+              });
+            done();
           })
       })
       .catch((error) => {
         console.log("@@@@@@@@@@",error);
-        assert.fail(error);
-      })
-      .finally(() => {
-        done();
+        done(error);
       })
   });
 
@@ -99,14 +96,14 @@ describe('User Service', () => {
                 expect(result.length).to.equal(1);
                 expect(result[0]).to.eql(blackWidowUser);
               })
-              .finally(() => db.close())
+              .finally(() => {
+                db.close();
+                done();
+              })
           })
       })
       .catch(error => {
-        assert.fail();
-      })
-      .finally(() => {
-        done();
+        done(error)
       })
   });
 });

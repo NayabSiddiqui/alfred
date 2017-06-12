@@ -100,7 +100,7 @@ describe('Leave Service', () => {
       })
       .catch(error => {
         console.log(error);
-        assert.fail(error);
+        done(error);;
       })
       .finally(() => done())
   });
@@ -116,7 +116,7 @@ describe('Leave Service', () => {
       })
       .catch(error => {
         console.log(error);
-        assert.fail()
+        done(error);
       })
       .finally(() => done());
   });
@@ -132,7 +132,7 @@ describe('Leave Service', () => {
       })
       .catch(error => {
         console.log(error);
-        assert.fail()
+        done(error);
       })
       .finally(() => done());
   });
@@ -149,7 +149,7 @@ describe('Leave Service', () => {
       })
       .catch(error => {
         console.log(error);
-        assert.fail()
+        done(error);
       })
       .finally(() => done());
   });
@@ -166,7 +166,7 @@ describe('Leave Service', () => {
       })
       .catch(error => {
         console.log(error);
-        assert.fail()
+        done(error);
       })
       .finally(() => done());
   });
@@ -191,7 +191,7 @@ describe('Leave Service', () => {
       })
       .catch(error => {
         console.log(error);
-        assert.fail()
+        done(error);
       })
       .finally(() => done());
   });
