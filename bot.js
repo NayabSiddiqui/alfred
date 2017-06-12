@@ -14,7 +14,7 @@ if (!clientId || !clientSecret || !config.port) {
 }
 
 const controller = Botkit.slackbot({
-  debug: true,
+  debug: false,
   interactive_replies: true, // tells botkit to send button clicks into conversations
   json_file_store: './alfred-bot-db/'
 });

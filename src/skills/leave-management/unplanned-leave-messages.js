@@ -1,7 +1,7 @@
 // TODO spin up regex for the below messages
 
 const unplannedLeaveMessages = [
-  'on leave today',
+  /(leave today)/i,
   'taking off today',
   'taking a day off today',
   'not feeling well',

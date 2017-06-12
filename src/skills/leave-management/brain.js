@@ -6,6 +6,7 @@ var unplannedLeaveMessages = require('./unplanned-leave-messages'),
 module.exports = function (controller) {
 
   moment.locale('en');
+  const dateUtils = new DateUtils();
 
   controller.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
 
@@ -94,68 +95,82 @@ module.exports = function (controller) {
     const pattern = /(leave on|day off on)[/\s]+(0?[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])/i;
 
     if (pattern.test(message.text)) {
-      const utils = new DateUtils();
-      var leaveDate = utils.extractDate(message.text);
-      if (!leaveDate) {
-        bot.reply(message, promptLeaveOnMessage);
+
+      const result = dateUtils.extractDate(message.text);
+      if(result.isWeekend){
+        const displayDate = result.date.format("LL");
+        bot.reply(message, {
+          text: 'Oops !',
+          attachments: [
+            {
+              title: `${displayDate} is a weekend, which is a weekly off for you. Please check the date and apply again.`
+            }
+          ]
+        });
       }
       else {
-        bot.startConversation(message, function (err, convo) {
-          convo.setVar('leaveDate',leaveDate.toDate());
-          convo.setVar('displayDate', leaveDate.format("LL"));
+        const leaveDate = result.date;
+        if (!leaveDate) {
+          bot.reply(message, promptLeaveOnMessage);
+        }
+        else {
+          bot.startConversation(message, function (err, convo) {
+            convo.setVar('leaveDate',leaveDate.toDate());
+            convo.setVar('displayDate', leaveDate.format("LL"));
 
-          convo.addQuestion({
-            text: 'Please confirm your leave application.',
-            attachments: [
+            convo.addQuestion({
+              text: 'Please confirm your leave application.',
+              attachments: [
+                {
+                  title: 'Leave for {{vars.displayDate}}',
+                  callback_id: callbackTypes.conversation,
+                  attachment_type: 'default',
+                  actions: [
+                    {
+                      "name": "yes-full-day",
+                      "text": "Confirm",
+                      "value": "yes-full-day",
+                      "type": "button",
+                      "style": "primary"
+                    },
+                    {
+                      "name": "cancel",
+                      "text": "Cancel",
+                      "value": "no",
+                      "type": "button"
+                    }
+                  ]
+                }
+              ]}, [
               {
-                title: 'Leave for {{vars.displayDate}}',
-                callback_id: callbackTypes.conversation,
-                attachment_type: 'default',
-                actions: [
-                  {
-                    "name": "yes-full-day",
-                    "text": "Confirm",
-                    "value": "yes-full-day",
-                    "type": "button",
-                    "style": "primary"
-                  },
-                  {
-                    "name": "cancel",
-                    "text": "Cancel",
-                    "value": "no",
-                    "type": "button"
-                  }
-                ]
-              }
-            ]}, [
-            {
-              pattern: bot.utterances.yes,
-              callback: function (response, convo) {
-                convo.say('Great! I will continue...');
-                // do something else...
-                convo.next();
+                pattern: bot.utterances.yes,
+                callback: function (response, convo) {
+                  convo.say('Great! I will continue...');
+                  // do something else...
+                  convo.next();
 
+                }
+              },
+              {
+                pattern: bot.utterances.no,
+                callback: function (response, convo) {
+                  convo.say('Perhaps later.');
+                  // do something else...
+                  convo.next();
+                }
+              },
+              {
+                default: true,
+                callback: function (response, convo) {
+                  // just repeat the question
+                  convo.repeat();
+                  convo.next();
+                }
               }
-            },
-            {
-              pattern: bot.utterances.no,
-              callback: function (response, convo) {
-                convo.say('Perhaps later.');
-                // do something else...
-                convo.next();
-              }
-            },
-            {
-              default: true,
-              callback: function (response, convo) {
-                // just repeat the question
-                convo.repeat();
-                convo.next();
-              }
-            }
-          ])
-        });
-        // bot.reply(message, 'Awesome')
+            ])
+          });
+          // bot.reply(message, 'Awesome')
+        }
       }
     }
     else {
