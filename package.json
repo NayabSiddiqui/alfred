@@ -20,11 +20,13 @@
     "botkit": "^0.5.4",
     "express": "^4.15.3",
     "moment": "^2.18.1",
+    "mongodb": "^2.2.28",
     "node-wit": "^4.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.4.1",
+    "nedb": "^1.8.0",
     "nock": "^9.0.13",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2"

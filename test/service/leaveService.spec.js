@@ -19,12 +19,12 @@ describe('Leave Service', () => {
     nock.cleanAll();
   });
 
-  function givenThatEmployeeGetsRegistered(employeeId, firstName, lastName) {
+  function givenThatEmployeeGetsRegistered(employeeId, email, givenName) {
     nock(leaveApiRootUrl)
       .post(`/employees`, {
         id: employeeId,
-        firstName: firstName,
-        lastName: lastName
+        email: email,
+        givenName: givenName
       })
       .reply(200, {
         ok: true
@@ -89,13 +89,13 @@ describe('Leave Service', () => {
 
   it('should be able to register a new employee', (done) => {
     const employeeId = 'ironman';
-    const firstName = 'Tony';
-    const lastName = 'Stark';
+    const email = 'ironman@marvel.com';
+    const givenName = 'Tony Stark';
 
 
-    givenThatEmployeeGetsRegistered(employeeId, firstName, lastName);
+    givenThatEmployeeGetsRegistered(employeeId, email, givenName);
 
-    leaveService.registerEmployee(employeeId, firstName, lastName)
+    leaveService.registerEmployee(employeeId, email, givenName)
       .then(() => {
       })
       .catch(error => {

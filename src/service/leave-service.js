@@ -5,12 +5,12 @@ const LeaveService = function (apiRootUrl) {
 
   const url = apiRootUrl;
 
-  const registerEmployee = function (employeeId, firstName, lastName) {
+  const registerEmployee = function (employeeId, email, givenName) {
     return new Promise((resolve, reject) => {
       axios.post(`${url}/employees`, {
         id: employeeId,
-        firstName: firstName,
-        lastName: lastName
+        email: email,
+        givenName: givenName
       })
         .then((data) => resolve(data))
         .catch(error => reject(error))

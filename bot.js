@@ -44,7 +44,7 @@ controller.setupWebserver(config.port, function (err, webserver) {
 });
 
 //register middleware
-// require('./src/middlewares/wit-ai')(controller);
+require('./src/middlewares/leave-service-registration')(controller, config);
 
 controller.hears('', 'direct_mention,mention', function (bot, message) {
   const user = message.user;
