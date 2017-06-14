@@ -13,7 +13,7 @@ const DateUtils = function () {
       const date = moment(`${monthAndDay}-${currentYear}`, ['MM-DD-YYYY']);
       return {
         date: date.startOf('day'),
-        isWeekend: date.isoWeekday() == 6 || date.isoWeekday() == 7
+        isWeekend: isWeekend(date)
       };
     }
     else {
@@ -21,8 +21,13 @@ const DateUtils = function () {
     }
   };
 
+  const isWeekend = function (date) {
+    return date.isoWeekday() == 6 || date.isoWeekday() == 7
+  };
+
   return {
-    extractDate: extractDate
+    extractDate: extractDate,
+    isWeekend: isWeekend
   };
 };
 

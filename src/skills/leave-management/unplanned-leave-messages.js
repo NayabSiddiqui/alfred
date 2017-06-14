@@ -3,6 +3,7 @@
 const unplannedLeaveMessages = [
   /(leave today)/i,
   'taking off today',
+  'taking day off today',
   'taking a day off today',
   'not feeling well',
   'not feeling well today',

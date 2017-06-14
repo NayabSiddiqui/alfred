@@ -14,7 +14,7 @@ module.exports = function (callbackId) {
 
 const conversationHandler = function () {
   var handleResponse = function (response) {
-    return ' :thumbsup: ';
+    return ' Processing your request... ';
   };
 
   return {

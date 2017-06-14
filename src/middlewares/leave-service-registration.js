@@ -21,9 +21,13 @@ module.exports = function (controller, config) {
             if (result.newUser == true) {
               leaveService.registerEmployee(userToBeRegistered.userId, userToBeRegistered.email, userToBeRegistered.givenName);
             }
-          })
+          });
+        message.from = currentUser.name;
+        next();
+      }
+      else {
+        next();
       }
     });
-    next();
   });
 };

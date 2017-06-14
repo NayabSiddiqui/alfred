@@ -46,6 +46,9 @@ controller.setupWebserver(config.port, function (err, webserver) {
 //register middleware
 require('./src/middlewares/leave-service-registration')(controller, config);
 
+//register skills
+require('./src/skills/initialize-brains')(controller, config);
+
 controller.hears('', 'direct_mention,mention', function (bot, message) {
   const user = message.user;
 
@@ -67,7 +70,6 @@ controller.hears('', 'direct_mention,mention', function (bot, message) {
   });
 });
 
-require('./src/skills/initialize-brains')(controller);
 
 controller.on('interactive_message_callback', function (bot, message) {
 

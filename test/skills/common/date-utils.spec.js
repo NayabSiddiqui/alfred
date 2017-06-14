@@ -50,6 +50,20 @@ describe('Date utils', () => {
     const date = utils.extractDate(inputString);
 
     expect(date).to.equal(null);
-  })
+  });
+
+  it('should return true if the given date is a weekend', () => {
+    const saturdayDate = moment('06-10-2017', ['MM-DD-YYYY']);
+    const sundayDate = moment('06-11-2017', ['MM-DD-YYYY']);
+
+    expect(utils.isWeekend(saturdayDate)).to.equal(true);
+    expect(utils.isWeekend(sundayDate)).to.equal(true);
+  });
+
+  it('should return false if the given date is not a weekend', () => {
+    const weekdayDate = moment('06-09-2017', ['MM-DD-YYYY']);
+
+    expect(utils.isWeekend(weekdayDate)).to.equal(false);
+  });
 });
 

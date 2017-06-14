@@ -1,79 +1,11 @@
-var unplannedLeaveMessages = require('./unplanned-leave-messages'),
+const unplannedLeaveMessages = require('./unplanned-leave-messages'),
   callbackTypes = require('../callback-types'),
-  DateUtils = require('../common/date-utils'),
+  dateUtils = new require('../common/date-utils')(),
   moment = require('moment');
 
-module.exports = function (controller) {
+module.exports = function (controller, leaveService) {
 
   moment.locale('en');
-  const dateUtils = new DateUtils();
-
-  controller.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
-
-    bot.startConversation(message, function(error, convo){
-      convo.setVar('leaveDate', moment());
-      convo.setVar('displayDate', moment().format("LL"));
-
-      convo.addQuestion({
-        text: 'Do you want me to apply for an unplanned leave today on your behalf ? Please confirm.',
-        attachments: [
-          {
-            title: 'Leave for {{vars.displayDate}}',
-            callback_id: callbackTypes.conversation,
-            attachment_type: 'default',
-            actions: [
-              {
-                "name": "yes-full-day",
-                "text": "Yes",
-                "value": "yes-full-day",
-                "type": "button",
-                "style": "primary"
-              },
-              {
-                "name": "yes-half-day",
-                "text": "Yes, for half day",
-                "value": "yes-half-day",
-                "type": "button",
-                "style": "primary"
-              },
-              {
-                "name": "no",
-                "text": "No",
-                "value": "no",
-                "type": "button"
-              }
-            ]
-          }
-        ]}, [
-        {
-          pattern: bot.utterances.yes,
-          callback: function (response, convo) {
-            convo.say('Great! I will continue...');
-
-            // do something else...
-            convo.next();
-
-          }
-        },
-        {
-          pattern: bot.utterances.no,
-          callback: function (response, convo) {
-            convo.say('Perhaps later.');
-            // do something else...
-            convo.next();
-          }
-        },
-        {
-          default: true,
-          callback: function (response, convo) {
-            // just repeat the question
-            convo.repeat();
-            convo.next();
-          }
-        }
-      ])
-    });
-  });
 
   const promptLeaveOnMessage = {
     text: "Oops! didn't quite get that. :confused:",
@@ -91,22 +23,150 @@ module.exports = function (controller) {
     ]
   };
 
+  const promptDayIsWeekdayMessage = (displayDate) => {
+    return {
+      text: 'Oops !',
+      attachments: [
+        {
+          title: `${displayDate} is a weekend, which is a weekly off for you. Please check the date and apply again.`
+        }
+      ]
+    }
+  };
+
+  const leaveAppliedSuccessfully = (date, isHalfDay) => {
+    return {
+      text: " :white_check_mark: Success!",
+      attachments: [
+        {
+          text: `*${isHalfDay ? 'Half' : 'One'} day* leave applied for *${date}*`,
+          color: '#36a64f',
+          mrkdwn_in: ['text']
+        },
+        {
+          text: "FYI: You can type `summary leaves` to view the summary of your leaves...",
+          color: '#9999ff',
+          mrkdwn_in: ['text']
+        }
+      ]
+    }
+  };
+
+  const errorMessage = (reason) => {
+    return {
+      text: 'Oops! Failed to process your request. :confused:',
+      attachments: [
+        {
+          text: `Reason:  \`${reason}\`.`,
+          color: '#ff4c4c',
+          mrkdwn_in: ['text']
+        }
+      ]
+    }
+  };
+
+  controller.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
+
+    const today = moment();
+    if (dateUtils.isWeekend(today)) {
+      bot.reply(message, promptDayIsWeekdayMessage(today.format("LL")))
+    }
+    else {
+      bot.startConversation(message, function (error, convo) {
+        convo.setVar('leaveDate', today);
+        convo.setVar('displayDate', today.format("LL"));
+
+        convo.addQuestion({
+          text: 'Do you want me to apply for an unplanned leave today on your behalf ? Please confirm.',
+          attachments: [
+            {
+              title: 'Leave for {{vars.displayDate}}',
+              callback_id: callbackTypes.conversation,
+              attachment_type: 'default',
+              actions: [
+                {
+                  "name": "yes-full-day",
+                  "text": "Yes",
+                  "value": "yes-full-day",
+                  "type": "button",
+                  "style": "primary"
+                },
+                {
+                  "name": "yes-half-day",
+                  "text": "Yes, for half day",
+                  "value": "yes-half-day",
+                  "type": "button",
+                  "style": "primary"
+                },
+                {
+                  "name": "no",
+                  "text": "No",
+                  "value": "no",
+                  "type": "button"
+                }
+              ]
+            }
+          ]
+        }, [
+          {
+            pattern: bot.utterances.yes,
+            callback: function (response, convo) {
+
+              if (response.text == 'yes-half-day') {
+                leaveService.applyHalfDayLeaves(message.from, convo.vars.leaveDate, convo.vars.leaveDate)
+                  .then(() => {
+                    convo.say(leaveAppliedSuccessfully(convo.vars.displayDate, true));
+                  })
+                  .catch((error) => {
+                    const reasonForFailure = error.response.data || 'not clear at the moment. Please contact your administrator.';
+                    convo.say(errorMessage(reasonForFailure));
+                  })
+                  .finally(() => convo.next());
+              }
+              else {
+                leaveService.applyFullDayLeaves(message.from, convo.vars.leaveDate, convo.vars.leaveDate)
+                  .then(() => {
+                    convo.say(leaveAppliedSuccessfully(convo.vars.displayDate, false));
+                  })
+                  .catch((error) => {
+                    const reasonForFailure = error.response.data || 'not clear at the moment. Please contact your administrator.';
+                    convo.say(errorMessage(reasonForFailure));
+                  })
+                  .finally(() => convo.next());
+              }
+            }
+          },
+          {
+            pattern: bot.utterances.no,
+            callback: function (response, convo) {
+              convo.say('Cancelled your last request.');
+              // do something else...
+              convo.next();
+            }
+          },
+          {
+            default: true,
+            callback: function (response, convo) {
+              // just repeat the question
+              convo.repeat();
+              convo.next();
+            }
+          }
+        ])
+      });
+    }
+  });
+
+
   controller.hears(['leave on', 'day off'], 'direct_message', function (bot, message) {
     const pattern = /(leave on|day off on)[/\s]+(0?[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])/i;
 
     if (pattern.test(message.text)) {
 
       const result = dateUtils.extractDate(message.text);
-      if(result.isWeekend){
+      if (result.isWeekend) {
         const displayDate = result.date.format("LL");
-        bot.reply(message, {
-          text: 'Oops !',
-          attachments: [
-            {
-              title: `${displayDate} is a weekend, which is a weekly off for you. Please check the date and apply again.`
-            }
-          ]
-        });
+        bot.reply(message, promptDayIsWeekdayMessage(displayDate));
       }
       else {
         const leaveDate = result.date;
@@ -115,7 +175,7 @@ module.exports = function (controller) {
         }
         else {
           bot.startConversation(message, function (err, convo) {
-            convo.setVar('leaveDate',leaveDate.toDate());
+            convo.setVar('leaveDate', leaveDate);
             convo.setVar('displayDate', leaveDate.format("LL"));
 
             convo.addQuestion({
@@ -141,20 +201,27 @@ module.exports = function (controller) {
                     }
                   ]
                 }
-              ]}, [
+              ]
+            }, [
               {
                 pattern: bot.utterances.yes,
                 callback: function (response, convo) {
-                  convo.say('Great! I will continue...');
-                  // do something else...
-                  convo.next();
+                  leaveService.applyFullDayLeaves(message.from, convo.vars.leaveDate, convo.vars.leaveDate)
+                    .then(() => {
+                      convo.say(leaveAppliedSuccessfully(convo.vars.displayDate, false));
+                    })
+                    .catch((error) => {
+                      const reasonForFailure = error.response.data || 'not clear at the moment. Please contact your administrator.';
+                      convo.say(errorMessage(reasonForFailure));
+                    })
+                    .finally(() => convo.next());
 
                 }
               },
               {
                 pattern: bot.utterances.no,
                 callback: function (response, convo) {
-                  convo.say('Perhaps later.');
+                  convo.say('Cancelled your last request.');
                   // do something else...
                   convo.next();
                 }
@@ -169,7 +236,6 @@ module.exports = function (controller) {
               }
             ])
           });
-          // bot.reply(message, 'Awesome')
         }
       }
     }

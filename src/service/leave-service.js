@@ -59,7 +59,11 @@ const LeaveService = function (apiRootUrl) {
         isHalfDay: isHalfDay
       })
         .then((data) => resolve(data))
-        .catch(error => reject(error))
+        .catch(error => {
+          console.log("## error occured ##")
+          console.log(error)
+          reject(error)
+        })
     });
   };
 
