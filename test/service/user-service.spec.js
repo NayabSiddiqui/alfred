@@ -9,8 +9,9 @@ var chai = require("chai"),
 describe('User Service', () => {
 
   let userService = null;
-  const mongoUrl = 'mongodb://localhost:27017/alfred';
+  const mongoUrl = 'mongodb://localhost:27017/alfred-test';
   const blackWidowUser = {
+    slackId: '123321',
     userId: 'blackwidow',
     email: 'blackwidow@shield.com',
     givenName: 'Natasha Romanov'
@@ -55,6 +56,7 @@ describe('User Service', () => {
 
   it('should register user if user is not registered', function (done) {
     const user = {
+      slackId: 'vodoo',
       userId: 'voodooChild',
       email: "diana@dc.com",
       givenName: "diana"
@@ -62,7 +64,7 @@ describe('User Service', () => {
 
     userService.registerUserIfNotPresent(user)
       .then((result) => {
-        expect(result).to.eql({newUser: true})
+        expect(result).to.eql({newUser: true});
         MongoClient.connect(mongoUrl, {
           promiseLibrary: Promise
         })
@@ -84,7 +86,7 @@ describe('User Service', () => {
   it('should not register an already registered user', (done) => {
     userService.registerUserIfNotPresent(blackWidowUser)
       .then(result => {
-        expect(result).to.eql({newUser: false})
+        expect(result).to.eql({newUser: false});
         MongoClient.connect(mongoUrl, {
           promiseLibrary: Promise
         })
@@ -106,4 +108,5 @@ describe('User Service', () => {
         done(error)
       })
   });
+
 });

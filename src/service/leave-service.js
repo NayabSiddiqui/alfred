@@ -34,12 +34,12 @@ const LeaveService = function (apiRootUrl) {
         .catch(error => reject(error))
     })
   };
-  
-  const getAppliedLeaves = function (employeeId) {
+
+  const getLeaveSummary = function (employeeId) {
     return new Promise((resolve, reject) => {
       axios.get(`${url}/employees/${employeeId}/leaves`)
-        .then((response) => resolve(response.data.leaves))
-        .catch(error => reject(error))
+        .then((response) => resolve(response.data))
+        .catch(error => reject(error.response || {data: 'Some error occured'}))
     });
   };
 
@@ -48,7 +48,7 @@ const LeaveService = function (apiRootUrl) {
   };
 
   const applyHalfDayLeaves = function (employeeId, from, to) {
-   return applyLeaves(employeeId, from, to, true);
+    return applyLeaves(employeeId, from, to, true);
   };
 
   const applyLeaves = function (employeeId, from, to, isHalfDay) {
@@ -60,13 +60,10 @@ const LeaveService = function (apiRootUrl) {
       })
         .then((data) => resolve(data))
         .catch(error => {
-          console.log("## error occured ##")
-          console.log(error)
           reject(error)
         })
     });
   };
-
 
 
   return {
@@ -75,7 +72,7 @@ const LeaveService = function (apiRootUrl) {
     getBalance: getBalance,
     applyFullDayLeaves: applyFullDayLeaves,
     applyHalfDayLeaves: applyHalfDayLeaves,
-    getAppliedLeaves: getAppliedLeaves
+    getLeaveSummary: getLeaveSummary
   }
 
 };

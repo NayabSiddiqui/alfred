@@ -1,9 +1,12 @@
 const unplannedLeaveMessages = require('./unplanned-leave-messages'),
   callbackTypes = require('../callback-types'),
   dateUtils = new require('../common/date-utils')(),
-  moment = require('moment');
+  moment = require('moment'),
+  MessageBuilder = require('./message-builder');
 
 module.exports = function (controller, leaveService) {
+
+  const messageBuilder = new MessageBuilder();
 
   moment.locale('en');
 
@@ -242,5 +245,37 @@ module.exports = function (controller, leaveService) {
     else {
       bot.reply(message, promptLeaveOnMessage)
     }
+  });
+
+  controller.hears(['summary leaves', 'leaves summary', 'leave summary'], 'direct_message', function (bot, message) {
+    console.log("## did come here #")
+    bot.api.users.info({user: message.user}, function (error, response) {
+      if (error) {
+        console.log("## Error Occurred ##");
+        console.log(error)
+      }
+      else {
+        const currentUser = response["user"];
+        const userId = currentUser.name;
+        leaveService.getLeaveSummary(userId)
+          .then((response) => {
+
+            const summaryMessage = {
+              text: "Here is the synopsis...",
+              attachments: messageBuilder.buildLeaveSummary(response)
+            };
+
+            bot.startConversation(message, function (err, convo) {
+              convo.addMessage(summaryMessage);
+            });
+            // bot.reply(message, summaryMessage)
+            // bot.reply(message, summaryMessage)
+          })
+          .catch(error => {
+            bot.reply(message, errorMessage(error))
+          })
+      }
+    })
+
   });
 };

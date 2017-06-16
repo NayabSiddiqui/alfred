@@ -26,6 +26,7 @@ const UserService = function (mongoUrl) {
                   })
               }
             })
+            .catch(error => reject(error))
             .finally(() => {
               db.close();
             });

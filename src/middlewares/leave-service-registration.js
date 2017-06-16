@@ -12,6 +12,7 @@ module.exports = function (controller, config) {
       const currentUser = response["user"];
       if (!!currentUser && currentUser.name != 'alfred') {
         const userToBeRegistered = {
+          slackId: message.user,
           userId: currentUser.name,
           email: currentUser.profile.email,
           givenName: currentUser.real_name

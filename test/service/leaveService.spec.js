@@ -53,17 +53,18 @@ describe('Leave Service', () => {
       });
   }
 
-  function givenThatPastLeavesExist(employeeId, from, to){
-    const leaves = getDatesBetween(from, to).map(date => {
+  function givenThatPastLeavesExist(employeeId, from, to) {
+    const leaveApplications = getDatesBetween(from, to).map((date, index) => {
       return {
-        isHalfDay : false,
-        date: date
+        id: `application-${index + 1}`,
+        days: [date]
       }
     });
     nock(leaveApiRootUrl)
       .get(`/employees/${employeeId}/leaves`)
       .reply(200, {
-        leaves: leaves
+        leaveApplications: leaveApplications,
+        balance: "12.5"
       })
   }
 
@@ -97,12 +98,12 @@ describe('Leave Service', () => {
 
     leaveService.registerEmployee(employeeId, email, givenName)
       .then(() => {
+        done()
       })
       .catch(error => {
         console.log(error);
-        done(error);;
+        done(error);
       })
-      .finally(() => done())
   });
 
   it('should be able to credit leaves to employees account', (done) => {
@@ -178,22 +179,25 @@ describe('Leave Service', () => {
 
     givenThatPastLeavesExist(employeeId, from, to);
 
-    leaveService.getAppliedLeaves(employeeId, from, to)
+    leaveService.getLeaveSummary(employeeId, from, to)
       .then((leaves) => {
-        const actualDates = getDatesBetween(moment(), moment().add(3, 'days'))
-          .map(date => {
-            return {
-              date: date,
-              isHalfDay: false
-            }
-          });
-        expect(leaves).to.eql(actualDates)
+        const result = {
+          leaveApplications: getDatesBetween(moment(), moment().add(3, 'days'))
+            .map((date, index) => {
+              return {
+                id: `application-${index + 1}`,
+                days: [date]
+              }
+            }),
+          balance: "12.5"
+        };
+        expect(leaves).to.eql(result);
+        done();
       })
       .catch(error => {
         console.log(error);
         done(error);
       })
-      .finally(() => done());
   });
 });
 
