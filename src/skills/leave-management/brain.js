@@ -10,69 +10,11 @@ module.exports = function (controller, leaveService) {
 
   moment.locale('en');
 
-  const promptLeaveOnMessage = {
-    text: "Oops! didn't quite get that. :confused:",
-    attachments: [
-      {
-        text: "you can type `leave on mm-dd` or `taking the day off on mm-dd` to apply leave for a particular day",
-        color: '#9999ff',
-        mrkdwn_in: ['text']
-      },
-      {
-        text: "type `help leaves` to know more about how to apply planned & unplanned leaves, notify when working remotely etc.",
-        color: '#9999ff',
-        mrkdwn_in: ['text']
-      }
-    ]
-  };
-
-  const promptDayIsWeekdayMessage = (displayDate) => {
-    return {
-      text: 'Oops !',
-      attachments: [
-        {
-          title: `${displayDate} is a weekend, which is a weekly off for you. Please check the date and apply again.`
-        }
-      ]
-    }
-  };
-
-  const leaveAppliedSuccessfully = (date, isHalfDay) => {
-    return {
-      text: " :white_check_mark: Success!",
-      attachments: [
-        {
-          text: `*${isHalfDay ? 'Half' : 'One'} day* leave applied for *${date}*`,
-          color: '#36a64f',
-          mrkdwn_in: ['text']
-        },
-        {
-          text: "FYI: You can type `summary leaves` to view the summary of your leaves...",
-          color: '#9999ff',
-          mrkdwn_in: ['text']
-        }
-      ]
-    }
-  };
-
-  const errorMessage = (reason) => {
-    return {
-      text: 'Oops! Failed to process your request. :confused:',
-      attachments: [
-        {
-          text: `Reason:  \`${reason}\`.`,
-          color: '#ff4c4c',
-          mrkdwn_in: ['text']
-        }
-      ]
-    }
-  };
-
   controller.hears(unplannedLeaveMessages, 'direct_message', function (bot, message) {
 
     const today = moment();
     if (dateUtils.isWeekend(today)) {
-      bot.reply(message, promptDayIsWeekdayMessage(today.format("LL")))
+      bot.reply(message, messageBuilder.buildDayIsWeekendPrompt(today.format("LL")))
     }
     else {
       bot.startConversation(message, function (error, convo) {
@@ -118,22 +60,22 @@ module.exports = function (controller, leaveService) {
               if (response.text == 'yes-half-day') {
                 leaveService.applyHalfDayLeaves(message.from, convo.vars.leaveDate, convo.vars.leaveDate)
                   .then(() => {
-                    convo.say(leaveAppliedSuccessfully(convo.vars.displayDate, true));
+                    convo.say(messageBuilder.buildUnplannedLeaveAppliedMessage(convo.vars.displayDate, true));
                   })
                   .catch((error) => {
                     const reasonForFailure = error.response.data || 'not clear at the moment. Please contact your administrator.';
-                    convo.say(errorMessage(reasonForFailure));
+                    convo.say(messageBuilder.buildErrorMessage(reasonForFailure));
                   })
                   .finally(() => convo.next());
               }
               else {
                 leaveService.applyFullDayLeaves(message.from, convo.vars.leaveDate, convo.vars.leaveDate)
                   .then(() => {
-                    convo.say(leaveAppliedSuccessfully(convo.vars.displayDate, false));
+                    convo.say(messageBuilder.buildUnplannedLeaveAppliedMessage(convo.vars.displayDate, false));
                   })
                   .catch((error) => {
                     const reasonForFailure = error.response.data || 'not clear at the moment. Please contact your administrator.';
-                    convo.say(errorMessage(reasonForFailure));
+                    convo.say(messageBuilder.buildErrorMessage(reasonForFailure));
                   })
                   .finally(() => convo.next());
               }
@@ -169,12 +111,12 @@ module.exports = function (controller, leaveService) {
       const result = dateUtils.extractDate(message.text);
       if (result.isWeekend) {
         const displayDate = result.date.format("LL");
-        bot.reply(message, promptDayIsWeekdayMessage(displayDate));
+        bot.reply(message, messageBuilder.buildDayIsWeekendPrompt(displayDate));
       }
       else {
         const leaveDate = result.date;
         if (!leaveDate) {
-          bot.reply(message, promptLeaveOnMessage);
+          bot.reply(message, messageBuilder.buildSingleDayUsagePrompt);
         }
         else {
           bot.startConversation(message, function (err, convo) {
@@ -211,11 +153,11 @@ module.exports = function (controller, leaveService) {
                 callback: function (response, convo) {
                   leaveService.applyFullDayLeaves(message.from, convo.vars.leaveDate, convo.vars.leaveDate)
                     .then(() => {
-                      convo.say(leaveAppliedSuccessfully(convo.vars.displayDate, false));
+                      convo.say(messageBuilder.buildUnplannedLeaveAppliedMessage(convo.vars.displayDate, false));
                     })
                     .catch((error) => {
                       const reasonForFailure = error.response.data || 'not clear at the moment. Please contact your administrator.';
-                      convo.say(errorMessage(reasonForFailure));
+                      convo.say(messageBuilder.buildErrorMessage(reasonForFailure));
                     })
                     .finally(() => convo.next());
 
@@ -243,7 +185,7 @@ module.exports = function (controller, leaveService) {
       }
     }
     else {
-      bot.reply(message, promptLeaveOnMessage)
+      bot.reply(message, messageBuilder.buildSingleDayUsagePrompt)
     }
   });
 
@@ -272,7 +214,7 @@ module.exports = function (controller, leaveService) {
             // bot.reply(message, summaryMessage)
           })
           .catch(error => {
-            bot.reply(message, errorMessage(error))
+            bot.reply(message, messageBuilder.buildErrorMessage(error))
           })
       }
     })
