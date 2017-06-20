@@ -16,7 +16,7 @@ module.exports = function(controller){
           mrkdwn_in: ['text']
         },
         {
-          text: "Type `leave summary` to view the summary of your leaves...",
+          text: "Type `leave summary` to view the summary of your leaves. Or, type `leave summary @user` to get summary of leaves for a user",
           color: '#fec611',
           mrkdwn_in: ['text']
         }
