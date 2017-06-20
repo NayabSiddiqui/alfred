@@ -65,6 +65,19 @@ const LeaveService = function (apiRootUrl) {
     });
   };
 
+  const getLeaveApplicationPreview = function (from, to) {
+    return new Promise((resolve, reject) => {
+      axios.post(`${url}/leaves/preview`, {
+        from: from.format(),
+        to: to.format()
+      })
+        .then((response) => resolve(response.data))
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
+    });
+  };
 
   return {
     registerEmployee: registerEmployee,
@@ -72,7 +85,8 @@ const LeaveService = function (apiRootUrl) {
     getBalance: getBalance,
     applyFullDayLeaves: applyFullDayLeaves,
     applyHalfDayLeaves: applyHalfDayLeaves,
-    getLeaveSummary: getLeaveSummary
+    getLeaveSummary: getLeaveSummary,
+    getLeaveApplicationPreview: getLeaveApplicationPreview
   }
 
 };

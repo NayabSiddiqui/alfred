@@ -17,6 +17,22 @@ const MessageBuilder = function () {
       }
     ]
   };
+
+  const buildPlannedLeaveUsagePrompt = {
+    text: "Oops! didn't quite get that. :confused:",
+    attachments: [
+      {
+        text: "you can type `leave from mm-dd to mm-dd` or `taking vacation from mm-dd to mm-dd` to apply leave for planned leave",
+        color: '#9999ff',
+        mrkdwn_in: ['text']
+      },
+      {
+        text: "type `help leaves` to know more about how to apply planned & unplanned leaves, notify when working remotely etc.",
+        color: '#9999ff',
+        mrkdwn_in: ['text']
+      }
+    ]
+  };
   
   const buildLeaveSummary = function (summary) {
     const singleFullDayLeaves = summary.leaveApplications
@@ -58,7 +74,7 @@ const MessageBuilder = function () {
         let leaveTill = moment(application.days[numberOfDaysOfLeave - 1]).format("LL");
 
         return `\n*${numberOfDaysOfLeave} day(s)* of leave starting from ${leaveFrom}, ending on ${leaveTill}`;
-      }),
+      }).toString(),
       color: '#92c544',
       mrkdwn_in: ['text']
     }
@@ -102,6 +118,24 @@ const MessageBuilder = function () {
     }
   };
 
+  const buildPlannedLeaveAppliedMessage = (fromDate, toDate, numberOfDays) => {
+    return {
+      text: " :white_check_mark: Success!",
+      attachments: [
+        {
+          text: `*${numberOfDays} days* of leave applied starting from *${fromDate}*, ending on *${toDate}*`,
+          color: '#36a64f',
+          mrkdwn_in: ['text']
+        },
+        {
+          text: "FYI: You can type `summary leaves` to view the summary of your leaves...",
+          color: '#9999ff',
+          mrkdwn_in: ['text']
+        }
+      ]
+    }
+  };
+
   const errorMessage = (reason) => {
     return {
       text: 'Oops! Failed to process your request. :confused:',
@@ -118,8 +152,10 @@ const MessageBuilder = function () {
   return {
     buildLeaveSummary: buildLeaveSummary,
     buildSingleDayUsagePrompt: buildSingleDayUsagePrompt,
+    buildPlannedLeaveUsagePrompt: buildPlannedLeaveUsagePrompt,
     buildDayIsWeekendPrompt: buildDayIsWeekendPrompt,
     buildUnplannedLeaveAppliedMessage: buildUnplannedLeaveAppliedMessage,
+    buildPlannedLeaveAppliedMessage: buildPlannedLeaveAppliedMessage,
     buildErrorMessage: errorMessage
   }
 };

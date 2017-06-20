@@ -14,7 +14,7 @@ describe('Date utils', () => {
 
   it('should be able to extract date from the likes of \'leave on mm-dd\'', () => {
     const inputString = 'leave on 08-23';
-    const result = utils.extractDate(inputString);
+    const result = utils.extractDateForUnplannedLeave(inputString);
 
     const currentYear = moment().year();
     const expectedDate = moment(`08-23-${currentYear}`, ['MM-DD-YYYY']);
@@ -25,11 +25,24 @@ describe('Date utils', () => {
     });
   });
 
+  it('should be able to extract date from the likes of \'leave from mm-dd to mm-dd\'', () => {
+    const inputString = 'leave from 06-12 to 06-15';
+    const result = utils.extractDatesForPlannedLeave(inputString);
+
+    const currentYear = moment().year();
+    const expectedResult = {
+      from: moment(`06-12-${currentYear}`, ['MM-DD-YYYY']),
+      to: moment(`06-15-${currentYear}`, ['MM-DD-YYYY'])
+    };
+
+    expect(result).to.eql(expectedResult);
+  });
+
   it('should be able to extract and detect weekend from the likes of \'leave on mm-dd\'', () => {
     const inputString_Saturday = 'leave on 06-10';
     const inputString_Sunday = 'leave on 06-11';
-    const result_saturday = utils.extractDate(inputString_Saturday);
-    const result_sunday = utils.extractDate(inputString_Sunday);
+    const result_saturday = utils.extractDateForUnplannedLeave(inputString_Saturday);
+    const result_sunday = utils.extractDateForUnplannedLeave(inputString_Sunday);
 
     const currentYear = moment().year();
     const expectedDate_Saturday = moment(`06-10-${currentYear}`, ['MM-DD-YYYY']);
@@ -47,7 +60,7 @@ describe('Date utils', () => {
 
   it('should return null for an invalid date construct', () => {
     const inputString = 'leave on 23-23';
-    const date = utils.extractDate(inputString);
+    const date = utils.extractDateForUnplannedLeave(inputString);
 
     expect(date).to.equal(null);
   });

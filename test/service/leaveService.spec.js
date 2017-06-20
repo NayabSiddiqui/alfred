@@ -67,6 +67,17 @@ describe('Leave Service', () => {
         balance: "12.5"
       })
   }
+  
+  function givenThatLeavePreviewIsReturned(from, to, numberOfLeaveDays) {
+    nock(`${leaveApiRootUrl}/leaves/preview`)
+      .post('', {
+        from: from.format,
+        to: to.format
+      })
+      .reply(200, {
+        numberOfLeaveDays: numberOfLeaveDays
+      });
+  }
 
 
   function getDatesBetween(from, to) {
@@ -147,12 +158,12 @@ describe('Leave Service', () => {
 
     leaveService.applyFullDayLeaves(employeeId, from, to)
       .then(() => {
+        done();
       })
       .catch(error => {
         console.log(error);
         done(error);
       })
-      .finally(() => done());
   });
 
   it('should be able to apply half day leaves for employee', (done) => {
@@ -199,5 +210,6 @@ describe('Leave Service', () => {
         done(error);
       })
   });
+  
 });
 

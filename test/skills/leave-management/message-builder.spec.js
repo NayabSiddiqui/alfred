@@ -65,7 +65,7 @@ describe('Leave: Message builder', () => {
         color: '#d36331',
         mrkdwn_in: [ 'text' ] },
       { title: 'Your planned vacations',
-        text: [ '\n*2 day(s)* of leave starting from May 5, 2017, ending on May 6, 2017' ],
+        text:  '\n*2 day(s)* of leave starting from May 5, 2017, ending on May 6, 2017' ,
         color: '#92c544',
         mrkdwn_in: [ 'text' ] },
       { text: 'Available balance : *7.0 days(s)*',
