@@ -12,6 +12,26 @@ describe('Leave: Message builder', () => {
     messageBuilder = new MessageBuilder();
   });
 
+  it('should respond when there is no existing record for leaves', () => {
+    const summary = {
+      "leaveApplications": [],
+      "balance": "9.5"
+    };
+
+    const message = messageBuilder.buildLeaveSummary(summary);
+    expect(message).to.eql([
+      {
+        title: 'No leave applications found.',
+        color: '#4286f4',
+        mrkdwn_in: ['text']
+      },
+      {
+        text: 'Available balance : *9.5 days(s)*',
+        color: '#fec611',
+        mrkdwn_in: ['text']
+      }]);
+  });
+
   it('should construct leave summary from summary object', () => {
     const summary = {
       "leaveApplications": [
@@ -56,20 +76,28 @@ describe('Leave: Message builder', () => {
     };
 
     const message = messageBuilder.buildLeaveSummary(summary);
-    expect(message).to.eql([ { title: 'Single Day Leave(s) applied on',
+    expect(message).to.eql([{
+      title: 'Single Day Leave(s) applied on',
       text: '\nJune 15, 2017,\nNovember 9, 2017,\nDecember 12, 2017',
       color: '#4286f4',
-      mrkdwn_in: [ 'text' ] },
-      { title: 'Half Day Leave(s) applied on',
+      mrkdwn_in: ['text']
+    },
+      {
+        title: 'Half Day Leave(s) applied on',
         text: '\nJune 14, 2017',
         color: '#d36331',
-        mrkdwn_in: [ 'text' ] },
-      { title: 'Your planned vacations',
-        text:  '\n*2 day(s)* of leave starting from May 5, 2017, ending on May 6, 2017' ,
+        mrkdwn_in: ['text']
+      },
+      {
+        title: 'Your planned vacations',
+        text: '\n*2 day(s)* of leave starting from May 5, 2017, ending on May 6, 2017',
         color: '#92c544',
-        mrkdwn_in: [ 'text' ] },
-      { text: 'Available balance : *7.0 days(s)*',
+        mrkdwn_in: ['text']
+      },
+      {
+        text: 'Available balance : *7.0 days(s)*',
         color: '#fec611',
-        mrkdwn_in: [ 'text' ] } ])
+        mrkdwn_in: ['text']
+      }]);
   });
 });

@@ -7,12 +7,17 @@ module.exports = function(controller){
       attachments: [
         {
           text: "Type `not feeling well today` or `taking day off` to apply for an unplanned leave for today.",
-          color: '#36a64f',
+          color: '#4286f4',
           mrkdwn_in: ['text']
         },
         {
           text: "Say `leave on dd-mm` or `leave from dd-mm to dd-mm` to apply for planned leaves.",
-          color: '#9999ff',
+          color: '#92c544',
+          mrkdwn_in: ['text']
+        },
+        {
+          text: "Type `summary leaves` to view the summary of your leaves...",
+          color: '#fec611',
           mrkdwn_in: ['text']
         }
       ]

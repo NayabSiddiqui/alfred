@@ -33,8 +33,23 @@ const MessageBuilder = function () {
       }
     ]
   };
-  
+
   const buildLeaveSummary = function (summary) {
+
+    const balanceLeaves = {
+      text: `Available balance : *${summary.balance} days(s)*`,
+      color: '#fec611',
+      mrkdwn_in: ['text']
+    };
+
+    if (summary.leaveApplications.length == 0) {
+      return [{
+        title: 'No leave applications found.',
+        color: '#4286f4',
+        mrkdwn_in: ['text']
+      }, balanceLeaves]
+    }
+
     const singleFullDayLeaves = summary.leaveApplications
       .filter(application => (application.days.length == 1) && (!application.halfDayLeaves));
     const halfDayLeaves = summary.leaveApplications
@@ -79,12 +94,6 @@ const MessageBuilder = function () {
       mrkdwn_in: ['text']
     }
       : {};
-
-    const balanceLeaves = {
-      text: `Available balance : *${summary.balance} days(s)*`,
-      color: '#fec611',
-      mrkdwn_in: ['text']
-    };
 
     return [oneDayLeaveSummary, halfDayLeaveSummary, plannedVacationSummary, balanceLeaves];
   };
