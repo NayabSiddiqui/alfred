@@ -18,6 +18,22 @@ const MessageBuilder = function () {
     ]
   };
 
+  const buildLeaveSummaryUsagePrompt = {
+    text: "Oops! didn't quite get that. :confused:",
+    attachments: [
+      {
+        text: "you can type `leave summary` to get details about your leave",
+        color: '#9999ff',
+        mrkdwn_in: ['text']
+      },
+      {
+        text: "type `leave summary @user` to get details about leave for a particular user.",
+        color: '#9999ff',
+        mrkdwn_in: ['text']
+      }
+    ]
+  };
+
   const buildPlannedLeaveUsagePrompt = {
     text: "Oops! didn't quite get that. :confused:",
     attachments: [
@@ -119,7 +135,7 @@ const MessageBuilder = function () {
           mrkdwn_in: ['text']
         },
         {
-          text: "FYI: You can type `summary leaves` to view the summary of your leaves...",
+          text: "FYI: You can type `leave summary` to view the summary of your leaves...",
           color: '#9999ff',
           mrkdwn_in: ['text']
         }
@@ -137,7 +153,7 @@ const MessageBuilder = function () {
           mrkdwn_in: ['text']
         },
         {
-          text: "FYI: You can type `summary leaves` to view the summary of your leaves...",
+          text: "FYI: You can type `leave summary` to view the summary of your leaves...",
           color: '#9999ff',
           mrkdwn_in: ['text']
         }
@@ -162,6 +178,7 @@ const MessageBuilder = function () {
     buildLeaveSummary: buildLeaveSummary,
     buildSingleDayUsagePrompt: buildSingleDayUsagePrompt,
     buildPlannedLeaveUsagePrompt: buildPlannedLeaveUsagePrompt,
+    buildLeaveSummaryUsagePrompt: buildLeaveSummaryUsagePrompt,
     buildDayIsWeekendPrompt: buildDayIsWeekendPrompt,
     buildUnplannedLeaveAppliedMessage: buildUnplannedLeaveAppliedMessage,
     buildPlannedLeaveAppliedMessage: buildPlannedLeaveAppliedMessage,
