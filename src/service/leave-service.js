@@ -73,9 +73,17 @@ const LeaveService = function (apiRootUrl) {
       })
         .then((response) => resolve(response.data))
         .catch(error => {
-          console.log(error)
+          console.log(error);
           reject(error)
         })
+    });
+  };
+
+  const cancelLeave = function(employeeId, applicationId) {
+    return new Promise((resolve, reject) => {
+      axios.delete(`${url}/employees/${employeeId}/leaves/${applicationId}`)
+        .then(() => resolve())
+        .catch(error => reject(error))
     });
   };
 
@@ -86,7 +94,8 @@ const LeaveService = function (apiRootUrl) {
     applyFullDayLeaves: applyFullDayLeaves,
     applyHalfDayLeaves: applyHalfDayLeaves,
     getLeaveSummary: getLeaveSummary,
-    getLeaveApplicationPreview: getLeaveApplicationPreview
+    getLeaveApplicationPreview: getLeaveApplicationPreview,
+    cancelLeave: cancelLeave
   }
 
 };

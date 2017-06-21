@@ -19,6 +19,11 @@ module.exports = function(controller){
           text: "Type `leave summary` to view the summary of your leaves. Or, type `leave summary @user` to get summary of leaves for a user",
           color: '#fec611',
           mrkdwn_in: ['text']
+        },
+        {
+          text: "Type `cancel leaves` to delete your existing leave applications",
+          color: "#ff4c4c",
+          mrkdwn_in: ['text']
         }
       ]
     });

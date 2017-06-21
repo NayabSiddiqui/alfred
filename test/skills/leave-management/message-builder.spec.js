@@ -21,7 +21,7 @@ describe('Leave: Message builder', () => {
     const message = messageBuilder.buildLeaveSummary(summary);
     expect(message).to.eql([
       {
-        title: 'No leave applications found.',
+        title: 'No leaves applied yet.',
         color: '#4286f4',
         mrkdwn_in: ['text']
       },

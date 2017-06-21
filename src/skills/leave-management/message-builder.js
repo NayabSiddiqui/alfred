@@ -60,7 +60,7 @@ const MessageBuilder = function () {
 
     if (summary.leaveApplications.length == 0) {
       return [{
-        title: 'No leave applications found.',
+        title: 'No leaves applied yet.',
         color: '#4286f4',
         mrkdwn_in: ['text']
       }, balanceLeaves]
@@ -161,6 +161,24 @@ const MessageBuilder = function () {
     }
   };
 
+  const buildLeaveCancelledMessage = () => {
+    return {
+      text: " :white_check_mark: Success!",
+      attachments: [
+        {
+          text: `Leave Cancelled`,
+          color: '#36a64f',
+          mrkdwn_in: ['text']
+        },
+        {
+          text: "FYI: You can type `leave summary` to view the summary of your leaves...",
+          color: '#9999ff',
+          mrkdwn_in: ['text']
+        }
+      ]
+    }
+  };
+
   const errorMessage = (reason) => {
     return {
       text: 'Oops! Failed to process your request. :confused:',
@@ -182,7 +200,8 @@ const MessageBuilder = function () {
     buildDayIsWeekendPrompt: buildDayIsWeekendPrompt,
     buildUnplannedLeaveAppliedMessage: buildUnplannedLeaveAppliedMessage,
     buildPlannedLeaveAppliedMessage: buildPlannedLeaveAppliedMessage,
-    buildErrorMessage: errorMessage
+    buildErrorMessage: errorMessage,
+    buildLeaveCancelledMessage: buildLeaveCancelledMessage
   }
 };
 

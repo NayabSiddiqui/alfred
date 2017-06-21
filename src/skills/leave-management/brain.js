@@ -12,4 +12,5 @@ module.exports = function (controller, leaveService) {
   require('./neurons/unplanned-leave')(controller, dateUtils, messageBuilder, moment, leaveService);
   require('./neurons/leave-summary')(controller, leaveService, messageBuilder);
   require('./neurons/planned-leave')(controller, dateUtils, messageBuilder, leaveService);
+  require('./neurons/delete-leave-application')(controller, messageBuilder, leaveService, moment);
 };

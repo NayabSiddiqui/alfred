@@ -2,8 +2,11 @@ module.exports = function (controller, leaveService, messageBuilder) {
 
   controller.hears(['summary leaves', 'leaves summary', 'leave summary'], 'direct_message', function (bot, message) {
     const userMessage = message.text;
-    const mentionedUserSlackId = userMessage.substring(userMessage.lastIndexOf('<@') + 2, userMessage.lastIndexOf('>')) || message.user;
-    console.log("###########", mentionedUserSlackId)
+    const mentionedUserSlackId = userMessage.indexOf("<@") > -1
+      ? userMessage.substring(userMessage.lastIndexOf('<@') + 2, userMessage.lastIndexOf('>'))
+      : message.user;
+    console.log("## user ##");
+    console.log(mentionedUserSlackId)
     bot.api.users.info({user: mentionedUserSlackId}, function (error, response) {
       if (error) {
         console.log(error);
