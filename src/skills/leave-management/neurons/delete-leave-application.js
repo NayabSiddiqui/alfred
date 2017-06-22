@@ -12,6 +12,7 @@ module.exports = function (controller, messageBuilder, leaveService, moment) {
         const userId = response["user"].name;
         leaveService.getLeaveSummary(userId)
           .then(summary => {
+            const today = moment();
             const leaveApplicationsMessage = {
               text: "Your leaves",
               attachments: summary.leaveApplications.map(application => {
@@ -29,7 +30,8 @@ module.exports = function (controller, messageBuilder, leaveService, moment) {
                       "type": "button",
                       "style": "danger"
                     }
-                  ]
+                  ],
+                  color: `${moment(application.days[application.days.length - 1]).isAfter(today, 'day') ? '#92c544' : '#ff4c4c'}`
                 };
               })
             };
