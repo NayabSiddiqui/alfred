@@ -45,6 +45,7 @@ controller.setupWebserver(config.port, function (err, webserver) {
 
 //register middleware
 require('./src/middlewares/leave-service-registration')(controller, config);
+require('./src/middlewares/channel-subscription')(controller, config);
 
 //register skills
 require('./src/skills/initialize-brains')(controller, config);
